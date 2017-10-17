@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+	<meta name="viewport" content="width=device-width" />
+	<title>LoanAPound Test Harness</title>
+</head>
+<body>
+	<h1>LoanAPound Test Harness</h1>
+	<input type="button" id="btnGetCreditScoreEngineNames" value="GetCreditScoreEngineNames" />
+	<p>Credit Score Engine Names:</p>
+	<p>
+		<textarea rows ="5" cols="80" id="txtCreditScoreEngineNames"></textarea>
+	</p>
+	<p>Applicant ID:</p>
+	<p><input type="text" id="txtApplicant" value="1"/></p>
+	<input type="button" id="btnGetApplicantCreditScores" value="GetApplicantCreditScores" />
+	<p>Credit Score Results:<div id="ApplicantCreditScoresResult"></div></p>
+	<script type="text/javascript" src="jquery-3.2.1.min.js"></script>
+	<script type="text/javascript">
+		$(function () {
+			$("#btnGetCreditScoreEngineNames").click(function () {
+				$.ajax({
+					type: "POST",
+					url: "../LoanAPound/GetCreditScoreEngineNames",
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+					success: function (response) {
+						$("#txtCreditScoreEngineNames").val(JSON.stringify(response));
+					},
+					failure: function (response) {
+						$("#txtCreditScoreEngineNames").val('Failure');
+					},
+					error: function (response) {
+						$("#txtCreditScoreEngineNames").val('Error');
+					}
+				});
+			});
+
+			$("#btnGetApplicantCreditScores").click(function () {
+				var parameters = '{creditScoreEngineNames:' + $("#txtCreditScoreEngineNames").val() + ',applicantID:' + $("#txtApplicant").val() + '}';
+				$.ajax({
+					type: "POST",
+					url: "../LoanAPound/GetApplicantCreditScores",
+					data: parameters,
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+					success: function (response) {
+						$("#ApplicantCreditScoresResult").text(JSON.stringify(response));
+					},
+					failure: function (response) {
+						$("#ApplicantCreditScoresResult").text('Failure');
+					},
+					error: function (response) {
+						$("#ApplicantCreditScoresResult").text('Error');
+					}
+				});
+			});
+        });
+	</script>
+</body>
+</html>
