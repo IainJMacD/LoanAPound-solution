@@ -1,4 +1,5 @@
 ﻿using LoanAPoundDataAccessLayer;
+using System.Collections.Generic;
 
 namespace LoanAPoundBusinessLayer
 {
@@ -7,17 +8,22 @@ namespace LoanAPoundBusinessLayer
     /// </summary>
     public static class ApplicantManager
     {
+        // Applicants is a cache of Applicant objects, maintained so that
+        // unnecessary repeated database queries are not performed
+        private static Dictionary<int, Applicant> Applicants = new Dictionary<int, Applicant>();
+
         public static Applicant GetApplicant(int applicantID)
         {
-            Applicant retVal = null;
-
-            ApplicantDO applicantDO;
-            if(Database.GetApplicantDO(applicantID, out applicantDO))
+            if (!Applicants.ContainsKey(applicantID))
             {
-                retVal = new Applicant(applicantDO);
+                ApplicantDO applicantDO;
+                if (Database.GetApplicantDO(applicantID, out applicantDO))
+                {
+                    Applicants[applicantID] = new Applicant(applicantDO);
+                }
             }
 
-            return retVal;
+            return Applicants[applicantID];
         }
     }
 }

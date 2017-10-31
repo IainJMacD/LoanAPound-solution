@@ -26,16 +26,6 @@ namespace LoanAPoundBusinessLayer
         public virtual int GetID() { return id; }
         public virtual void SetID(int id) { this.id = id; }
         public abstract double GetCreditScore(int applicantID);
-
-        protected virtual ApplicantDO GetApplicantDO(int applicantID)
-        {
-            ApplicantDO applicantDO;
-            if (!Database.GetApplicantDO(applicantID, out applicantDO))
-            {
-                applicantDO = null;
-            };
-            return applicantDO;
-        }
     }
 
     // Concrete Credit Score Engine classes - three dummy implentations are supplied in this file
@@ -50,7 +40,7 @@ namespace LoanAPoundBusinessLayer
 
         public override double GetCreditScore(int applicantID)
         {
-            return GetApplicantDO(applicantID).FirstName.Length * 10;
+            return ApplicantManager.GetApplicant(applicantID).FirstName.Length * 10;
         }
     }
 
@@ -63,8 +53,8 @@ namespace LoanAPoundBusinessLayer
 
         public override double GetCreditScore(int applicantID)
         {
-            ApplicantDO applicantDO = GetApplicantDO(applicantID);
-            return applicantDO.MiddleName.Length + applicantDO.Surname.Length;
+            Applicant applicant = ApplicantManager.GetApplicant(applicantID);
+            return applicant.MiddleName.Length + applicant.Surname.Length;
         }
     }
 
@@ -77,7 +67,7 @@ namespace LoanAPoundBusinessLayer
 
         public override double GetCreditScore(int applicantID)
         {
-            return GetApplicantDO(applicantID).EmailAddress.Contains("gmail")? 100 : 0;
+            return ApplicantManager.GetApplicant(applicantID).EmailAddress.Contains("gmail")? 100 : 0;
         }
     }
 }
